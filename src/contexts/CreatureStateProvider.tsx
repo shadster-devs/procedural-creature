@@ -1,65 +1,74 @@
 import React from "react";
 
-export type  CreatureState = {
-    numOfSegments : number
-    segmentsRadius : number[]
-    linkSize : number
-    angleConstraint : number
-}
+export type Chain = {
+    numOfSegments: number;
+    segmentsRadius: number[];
+    linkSize: number;
+    angleConstraint: number;
+};
 
+export type CreatureState = {
+    spine: Chain;
+    
+};
 
 interface CreatureStateContextProps {
-    creatureState : CreatureState
-    updateState : (newState : Partial<CreatureState>) => void
+    creatureState: CreatureState;
+    updateState: (newState: Partial<CreatureState>) => void;
 }
 
-const CreatureStateContext = React.createContext<CreatureStateContextProps | undefined>(undefined)
+const CreatureStateContext = React.createContext<CreatureStateContextProps | undefined>(undefined);
 
 export const useCreatureState = () => {
-    const context = React.useContext(CreatureStateContext)
+    const context = React.useContext(CreatureStateContext);
     if (!context) {
-        throw new Error('useCreatureState must be used within a CreatureStateProvider')
+        throw new Error('useCreatureState must be used within a CreatureStateProvider');
     }
-    return context
-}
+    return context;
+};
 
 export const CreatureStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [creatureState, setCreateState] = React.useState<CreatureState>({
-        numOfSegments: 50,
-        segmentsRadius: Array.from({ length: 5 }, (_, i) => 50-(i/2)),
-        linkSize: 30,
-        angleConstraint: Math.PI/12,
-    })
-
-    React.useEffect(() => {
-        //change angle constraint wrt link size, the lesser (exponentionally) the link size the more the angle constraint
-        setCreateState((prevState) => ({
-            ...prevState,
-            angleConstraint: Math.PI/12 / (30/prevState.linkSize)
-        }))
-
-    }, [creatureState.linkSize]);
+        spine: {
+            numOfSegments: 50,
+            segmentsRadius: Array.from({ length: 50 }, (_, i) => 50 - (i / 2)),
+            linkSize: 30,
+            angleConstraint: Math.PI / 12,
+        },
+    });
 
     React.useEffect(() => {
         setCreateState((prevState) => ({
             ...prevState,
-            segmentsRadius: Array.from({ length: prevState.numOfSegments }, (_, i) => 50-(i/2))
-        }))
-    }, [creatureState.numOfSegments]);
+            spine: {
+                ...prevState.spine,
+                angleConstraint: Math.PI / 12 / (30 / prevState.spine.linkSize),
+            },
+        }));
+    }, [creatureState.spine.linkSize]);
 
+    React.useEffect(() => {
+        setCreateState((prevState) => ({
+            ...prevState,
+            spine: {
+                ...prevState.spine,
+                segmentsRadius: Array.from({ length: prevState.spine.numOfSegments }, (_, i) => 50 - (i / 2)),
+            },
+        }));
+    }, [creatureState.spine.numOfSegments]);
 
     const updateState = (newState: Partial<CreatureState>) => {
         setCreateState((prevState) => ({
             ...prevState,
-            ...newState
-        }))
-    }
+            ...newState,
+        }));
+    };
 
     return (
         <CreatureStateContext.Provider value={{ creatureState, updateState }}>
             {children}
         </CreatureStateContext.Provider>
-    )
-}
+    );
+};
 
 export default CreatureStateProvider;
