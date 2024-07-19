@@ -1,17 +1,17 @@
 import React from "react";
-import { useCreatureState } from "@/contexts/CreatureStateProvider";
+import { useCreatureConfig } from "@/contexts/CreatureConfigProvider";
 import styles from './ControlSideMenu.module.scss';
 
 interface ControlSideMenuProps {}
 
 const ControlSideMenu: React.FC<ControlSideMenuProps> = () => {
-    const { creatureState, updateState } = useCreatureState();
+    const { creatureConfig, updateCreatureConfig } = useCreatureConfig();
 
     const handleNumOfSegmentsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const numOfSegments = parseInt(event.target.value);
-        updateState({
+        updateCreatureConfig({
             spine: {
-                ...creatureState.spine,
+                ...creatureConfig.spine,
                 numOfSegments
             }
         });
@@ -20,13 +20,13 @@ const ControlSideMenu: React.FC<ControlSideMenuProps> = () => {
     const handleSegmentsRadiusChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const newRadius = parseInt(event.target.value);
         const newSegmentsRadius = [
-            ...creatureState.spine.segmentsRadius.slice(0, index),
+            ...creatureConfig.spine.segmentsRadius.slice(0, index),
             newRadius,
-            ...creatureState.spine.segmentsRadius.slice(index + 1)
+            ...creatureConfig.spine.segmentsRadius.slice(index + 1)
         ];
-        updateState({
+        updateCreatureConfig({
             spine: {
-                ...creatureState.spine,
+                ...creatureConfig.spine,
                 segmentsRadius: newSegmentsRadius
             }
         });
@@ -34,9 +34,9 @@ const ControlSideMenu: React.FC<ControlSideMenuProps> = () => {
 
     const handleLinkSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const linkSize = parseInt(event.target.value);
-        updateState({
+        updateCreatureConfig({
             spine: {
-                ...creatureState.spine,
+                ...creatureConfig.spine,
                 linkSize
             }
         });
@@ -49,7 +49,7 @@ const ControlSideMenu: React.FC<ControlSideMenuProps> = () => {
                 <input
                     type="number"
                     onChange={handleNumOfSegmentsChange}
-                    value={creatureState.spine.numOfSegments}
+                    value={creatureConfig.spine.numOfSegments}
                 />
             </label>
             <label>
@@ -58,11 +58,11 @@ const ControlSideMenu: React.FC<ControlSideMenuProps> = () => {
                     type="range"
                     min="10"
                     max="50"
-                    value={creatureState.spine.linkSize}
+                    value={creatureConfig.spine.linkSize}
                     onChange={handleLinkSizeChange}
                 />
             </label>
-            {creatureState.spine.segmentsRadius.map((radius, index) => (
+            {creatureConfig.spine.segmentsRadius.map((radius, index) => (
                 <label key={index}>
                     Segment {index + 1} radius
                     <input

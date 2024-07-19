@@ -1,13 +1,13 @@
 import React, { MutableRefObject, useEffect } from 'react';
-import { useCreatureState } from '@/contexts/CreatureStateProvider';
-import {getInitialCreatureSegments, updateCreatureOnCanvas} from "@/canvasUtils/creature";
+import { getInitialCreatureSegments, updateCreatureOnCanvas} from "@/canvasUtils/creature";
+import {useCreatureConfig} from "@/contexts/CreatureConfigProvider";
 
 interface CreatureSimulatorProps {
     canvasRef: MutableRefObject<HTMLCanvasElement | null>;
 }
 
 const CreatureSimulator: React.FC<CreatureSimulatorProps> = ({ canvasRef }) => {
-    const { creatureState } = useCreatureState();
+    const { creatureConfig } = useCreatureConfig();
 
     useEffect(() => {
         const canvas = canvasRef!.current;
@@ -30,11 +30,11 @@ const CreatureSimulator: React.FC<CreatureSimulatorProps> = ({ canvasRef }) => {
         };
 
 
-        const creatureSegments = getInitialCreatureSegments(creatureState, width, height);
+        const creatureSegments = getInitialCreatureSegments(creatureConfig, width, height);
 
         const animate = () => {
             ctx.clearRect(0, 0, width, height);
-            updateCreatureOnCanvas(ctx, creatureState, mouseX, mouseY, width, height,creatureSegments);
+            updateCreatureOnCanvas(ctx, creatureConfig, mouseX, mouseY, width, height,creatureSegments, false);
             requestAnimationFrame(animate);
         };
 
@@ -49,7 +49,7 @@ const CreatureSimulator: React.FC<CreatureSimulatorProps> = ({ canvasRef }) => {
             canvas.removeEventListener('mousemove', handleMouseMove);
             canvas.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [canvasRef, creatureState]);
+    }, [canvasRef, creatureConfig]);
 
     return null;
 };

@@ -1,5 +1,7 @@
-import {CreatureState} from "@/contexts/CreatureStateProvider";
+//spine.ts
+
 import {constrainAngle} from "@/components/CreatureSimulator/utils";
+import {CreatureConfig} from "@/contexts/CreatureConfigProvider";
 
 
 export type SpineSegment = {
@@ -9,9 +11,9 @@ export type SpineSegment = {
     angle: number;
 };
 
-export const getInitialSpineArray = (creatureState : CreatureState, width : number, height :number) => {
+export const getInitialSpineArray = (creatureConfig : CreatureConfig, width : number, height :number) => {
 
-    const {numOfSegments, segmentsRadius, linkSize} = creatureState.spine;
+    const {numOfSegments, segmentsRadius, linkSize} = creatureConfig.spine;
     const spineSegments: SpineSegment[] = [];
     const initialX = width / 2;
     const initialY = height / 2;
@@ -28,7 +30,7 @@ export const getInitialSpineArray = (creatureState : CreatureState, width : numb
     return spineSegments;
 }
 
-export const updateSpineSegmentPositions = (segments : SpineSegment[], creatureState: CreatureState, mouseX: number, mouseY : number) => {
+export const updateSpineSegmentPositions = (segments : SpineSegment[], creatureConfig: CreatureConfig, mouseX: number, mouseY : number) => {
     const head = segments[0];
     const target = {
         x: head.x + (mouseX - head.x) * 0.1,
@@ -43,9 +45,9 @@ export const updateSpineSegmentPositions = (segments : SpineSegment[], creatureS
         const prevSegment = segments[i - 1];
         const currSegment = segments[i];
         const currAngle = Math.atan2(prevSegment.y - currSegment.y, prevSegment.x - currSegment.x);
-        currSegment.angle = constrainAngle(currAngle, prevSegment.angle, creatureState.spine.angleConstraint);
-        currSegment.x = prevSegment.x - Math.cos(currSegment.angle) * creatureState.spine.linkSize;
-        currSegment.y = prevSegment.y - Math.sin(currSegment.angle) * creatureState.spine.linkSize;
+        currSegment.angle = constrainAngle(currAngle, prevSegment.angle, creatureConfig.spine.angleConstraint);
+        currSegment.x = prevSegment.x - Math.cos(currSegment.angle) * creatureConfig.spine.linkSize;
+        currSegment.y = prevSegment.y - Math.sin(currSegment.angle) * creatureConfig.spine.linkSize;
     }
 };
 
@@ -110,7 +112,15 @@ export const drawSpineSegmentsOutline = (segments: SpineSegment[], ctx : CanvasR
 
 };
 
-export const updateSpineOnCanvas = (ctx: CanvasRenderingContext2D, creatureState: CreatureState, spineSegments: SpineSegment[], mouseX: number, mouseY: number) => {
-    updateSpineSegmentPositions(spineSegments, creatureState, mouseX, mouseY);
-    drawSpineSegmentsOutline(spineSegments, ctx);
+export const debugSpineSegments = (ctx: CanvasRenderingContext2D, segments: SpineSegment[]) => {
+    ctx.beginPath();
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = '#AC3931';
+    ctx.lineWidth = 4;
+
+    segments.forEach((segment) => {
+        ctx.beginPath();
+        ctx.arc(segment.x, segment.y, segment.radius, 0, Math.PI * 2);
+        ctx.stroke();
+    });
 }

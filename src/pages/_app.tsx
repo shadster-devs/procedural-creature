@@ -1,11 +1,11 @@
 import "@/styles/globals.scss";
 import type { AppProps } from "next/app";
-import CreatureStateProvider from "@/contexts/CreatureStateProvider";
+import CreatureConfigProvider from "@/contexts/CreatureConfigProvider";
 
 export default function App({ Component, pageProps }: AppProps) {
   return(
-      <CreatureStateProvider>
+      <CreatureConfigProvider>
         <Component {...pageProps} />
-      </CreatureStateProvider>
+      </CreatureConfigProvider>
   );
 }

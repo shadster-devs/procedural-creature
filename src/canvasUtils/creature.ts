@@ -1,23 +1,42 @@
-import {CreatureState} from "@/contexts/CreatureStateProvider";
+//creature.ts
 import {
+    debugSpineSegments, drawSpineSegmentsOutline,
     getInitialSpineArray,
-    SpineSegment, updateSpineOnCanvas,
+    SpineSegment, updateSpineSegmentPositions,
 } from "@/canvasUtils/spine";
+import {
+    drawLimbBaseSegments, drawLimeSegmentsOutline,
+    getInitialLimbSegments,
+    LimbSegment,
+    updateLimbSegmentPositions,
+} from "@/canvasUtils/limb";
+import {CreatureConfig} from "@/contexts/CreatureConfigProvider";
 
 export type CreatureSegments = {
     spineSegment: SpineSegment[];
+    limbSegments: LimbSegment[][];
 }
 
-export const getInitialCreatureSegments = (creatureState : CreatureState, width : number, height :number) => {
+export const getInitialCreatureSegments = (creatureConfig : CreatureConfig, width : number, height :number) => {
     const creatureSegments: CreatureSegments = {
-        spineSegment: getInitialSpineArray(creatureState, width, height),
+        spineSegment: getInitialSpineArray(creatureConfig, width, height),
+        limbSegments: getInitialLimbSegments(creatureConfig, width, height),
     }
     return creatureSegments;
 
 }
 
-export const updateCreatureOnCanvas = (ctx: CanvasRenderingContext2D, creatureState : CreatureState, mouseX : number, mouseY : number, width : number, height: number, creatureSegments:CreatureSegments ) => {
-    updateSpineOnCanvas(ctx,creatureState, creatureSegments.spineSegment,mouseX, mouseY);
+export const updateCreatureOnCanvas = (ctx: CanvasRenderingContext2D, creatureConfig : CreatureConfig, mouseX : number, mouseY : number, width : number, height: number, creatureSegments:CreatureSegments, debugMode: boolean ) => {
+    updateSpineSegmentPositions(creatureSegments.spineSegment, creatureConfig, mouseX, mouseY);
+    updateLimbSegmentPositions(creatureSegments.limbSegments, creatureSegments.spineSegment, creatureConfig);
 
 
+    if(debugMode) {
+        debugSpineSegments(ctx, creatureSegments.spineSegment);
+        drawLimbBaseSegments(ctx, creatureSegments.limbSegments);
+
+    } else {
+        drawLimeSegmentsOutline( creatureSegments.limbSegments, ctx);
+        drawSpineSegmentsOutline(creatureSegments.spineSegment, ctx);
+    }
 }
