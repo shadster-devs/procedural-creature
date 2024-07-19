@@ -53,7 +53,6 @@ const CreatureSimulator: React.FC<CreatureSimulatorProps> = ({ canvasRef }) => {
             angle : 0,
         }));
 
-        console.log(circles.length)
         const updateSegmentPositions = () => {
             const headPos = circles[0];
             const targetPos = {
@@ -124,7 +123,6 @@ const CreatureSimulator: React.FC<CreatureSimulatorProps> = ({ canvasRef }) => {
             // Draw the outline of the snake
             ctx.beginPath();
             ctx.lineCap = 'round';
-            ctx.fillStyle = '#AC3931';
 
             // Move to the first control point
             ctx.moveTo(points[0].controlX1, points[0].controlY1);

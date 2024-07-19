@@ -32,6 +32,15 @@ export const CreatureStateProvider: React.FC<{ children: React.ReactNode }> = ({
     })
 
     React.useEffect(() => {
+        //change angle constraint wrt link size, the lesser (exponentionally) the link size the more the angle constraint
+        setCreateState((prevState) => ({
+            ...prevState,
+            angleConstraint: Math.PI/12 / (30/prevState.linkSize)
+        }))
+
+    }, [creatureState.linkSize]);
+
+    React.useEffect(() => {
         setCreateState((prevState) => ({
             ...prevState,
             segmentsRadius: Array.from({ length: prevState.numOfSegments }, (_, i) => 50-(i/2))
