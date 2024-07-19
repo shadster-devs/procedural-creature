@@ -1,7 +1,6 @@
 import React, { MutableRefObject } from 'react';
 import {useCreatureState} from "@/contexts/CreatureStateProvider";
 import {constrainAngle} from "@/components/CreatureSimulator/utils";
-import {number} from "prop-types";
 
 interface CreatureSimulatorProps {
     canvasRef: MutableRefObject<HTMLCanvasElement | null>;
@@ -39,6 +38,7 @@ const CreatureSimulator: React.FC<CreatureSimulatorProps> = ({ canvasRef }) => {
         };
 
         const handleMouseMove = (event: MouseEvent) => {
+            if (!isMouseDown) return
             mouseX = event.clientX - canvas.getBoundingClientRect().left;
             mouseY = event.clientY - canvas.getBoundingClientRect().top;
         };
