@@ -1,8 +1,84 @@
 .control-side-menu {
-  width: 20%;
+  position: fixed;
+  top: 0;
+  right: 0;
   height: 100%;
-  min-height: 100%;
-  display: flex;
-    flex-direction: column;
+  width: 50%; /* Initial width */
   background-color: darkgrey;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, width 0.3s ease;
+  transform: translateX(0); /* Default position */
+  z-index: 999; /* Ensure it appears above the canvas */
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+
+  &.collapsed {
+    transform: translateX(100%); /* Hide off-screen */
+    width: 60px; /* Narrow width when collapsed */
+  }
+
+  .presets {
+    padding: 10px;
+  }
+
+  .presetButtonContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .presetName {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .presetButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+
+
+
+  .content {
+    padding: 10px;
+    flex: 1;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
 }
+
+
+.saveButton {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1001; /* Ensure it is above other elements */
+}
+

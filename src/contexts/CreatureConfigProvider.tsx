@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
 
 export type Spine = {
     numOfSegments: number;
@@ -13,15 +13,8 @@ export type Limb = {
     linkSize: number;
     angleConstraint: number;
     spawnSpineSegment: number;
-    spawnDirection : 'left' | 'right';
-}
-
-export type Fin = {
-    type : 'dorsal' | 'pectoral' | 'pelvic' | 'anal';
-    height : number;
-    startSegment : number;
-    endSegment? : number;
-}
+    spawnDirection: 'left' | 'right';
+};
 
 export type CreatureConfig = {
     spine: Spine;
@@ -31,53 +24,54 @@ export type CreatureConfig = {
 interface CreatureConfigContextProps {
     creatureConfig: CreatureConfig;
     updateCreatureConfig: (newState: Partial<CreatureConfig>) => void;
+    setCreaturePreset: (newState: CreatureConfig) => void;
 }
 
-const CreatureConfigContext = React.createContext<CreatureConfigContextProps | undefined>(undefined);
+const CreatureConfigContext = createContext<CreatureConfigContextProps | undefined>(undefined);
 
-export const useCreatureConfig = () => {
-    const context = React.useContext(CreatureConfigContext);
+export const useCreatureConfig = (): CreatureConfigContextProps => {
+    const context = useContext(CreatureConfigContext);
     if (!context) {
         throw new Error('useCreatureConfig must be used within a CreatureConfigProvider');
     }
     return context;
 };
 
-export const CreatureConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [creatureConfig, setCreatureConfig] = React.useState<CreatureConfig>({
+const initializeLimbs = (numOfSegments: number): Limb[] => {
+    const limbSpawnPoints = [0, 95];
+    return limbSpawnPoints.flatMap(spawnPoint => [
+        {
+            numOfSegments: 3,
+            segmentsRadius: Array.from({ length: 3 }, (_, i) => 10 - (i / 2)),
+            linkSize: 15,
+            angleConstraint: Math.PI / 12,
+            spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
+            spawnDirection: 'left',
+        },
+        {
+            numOfSegments: 3,
+            segmentsRadius: Array.from({ length: 3 }, (_, i) => 10 - (i / 2)),
+            linkSize: 15,
+            angleConstraint: Math.PI / 12,
+            spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
+            spawnDirection: 'right',
+        }
+    ]);
+};
+
+const CreatureConfigProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [creatureConfig, setCreatureConfig] = useState<CreatureConfig>({
         spine: {
-            numOfSegments: 10,
-            segmentsRadius: Array.from({ length: 10 }, (_, i) => 10 - (i / 2)),
+            numOfSegments: 50,
+            segmentsRadius: Array.from({ length: 50 }, (_, i) => 50 - (i / 2)),
             linkSize: 5,
             angleConstraint: Math.PI / 12,
         },
-        limbs : [],
+        limbs: [],
     });
 
-    const initializeLimbs = (numOfSegments: number) => {
-        const limbSpawnPoints = [0, 95];
-        return limbSpawnPoints.flatMap(spawnPoint => [
-            {
-                numOfSegments: 3,
-                segmentsRadius: Array.from({ length: 3 }, (_, i) => 10 - (i / 2)),
-                linkSize: 15,
-                angleConstraint: Math.PI / 12,
-                spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
-                spawnDirection: 'left' as 'left' | 'right',
-            },
-            {
-                numOfSegments: 3,
-                segmentsRadius: Array.from({ length: 3 }, (_, i) => 10 - (i / 2)),
-                linkSize: 15,
-                angleConstraint: Math.PI / 12,
-                spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
-                spawnDirection: 'right' as 'right' | 'left',
-            }
-        ]);
-    };
-
-    React.useEffect(() => {
-        setCreatureConfig((prevState) => ({
+    useEffect(() => {
+        setCreatureConfig(prevState => ({
             ...prevState,
             spine: {
                 ...prevState.spine,
@@ -86,26 +80,30 @@ export const CreatureConfigProvider: React.FC<{ children: React.ReactNode }> = (
         }));
     }, [creatureConfig.spine.linkSize]);
 
-    React.useEffect(() => {
-        setCreatureConfig((prevState) => ({
+    useEffect(() => {
+        setCreatureConfig(prevState => ({
             ...prevState,
             spine: {
                 ...prevState.spine,
-                segmentsRadius: Array.from({ length: prevState.spine.numOfSegments }, (_, i) => 20 - (i / 2)),
+                segmentsRadius: Array.from({ length: prevState.spine.numOfSegments }, (_, i) => 50 - (i / 5)),
             },
             limbs: initializeLimbs(prevState.spine.numOfSegments),
         }));
     }, [creatureConfig.spine.numOfSegments]);
 
     const updateCreatureConfig = (newState: Partial<CreatureConfig>) => {
-        setCreatureConfig((prevState) => ({
+        setCreatureConfig(prevState => ({
             ...prevState,
             ...newState,
         }));
     };
 
+    const setCreaturePreset = (newState: CreatureConfig) => {
+        setCreatureConfig(newState);
+    }
+
     return (
-        <CreatureConfigContext.Provider value={{ creatureConfig, updateCreatureConfig }}>
+        <CreatureConfigContext.Provider value={{ creatureConfig, updateCreatureConfig, setCreaturePreset }}>
             {children}
         </CreatureConfigContext.Provider>
     );
