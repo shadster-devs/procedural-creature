@@ -18,9 +18,9 @@ const CreatureSimulator: React.FC<CreatureSimulatorProps> = ({ canvasRef }) => {
         const width = canvas.width;
         const height = canvas.height;
 
-        const { moveToX, moveToY, isMouseDown } = initializeMovementState(width, height);
+        const { moveToX, moveToY, isMouseDown , isTouchActive} = initializeMovementState(width, height);
 
-        const cleanupListeners = setupEventListeners(canvas, moveToX, moveToY, isMouseDown);
+        const cleanupListeners = setupEventListeners(canvas, moveToX, moveToY, isMouseDown, isTouchActive);
 
         const creatureSegments = getInitialCreatureSegments(creatureConfig, width, height);
 
