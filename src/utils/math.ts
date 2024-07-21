@@ -18,3 +18,4 @@ export const simplifyAngle = (angle: number) => {
     while (angle < 0) angle += Math.PI * 2
     return angle
 }
+

@@ -1,12 +1,11 @@
 import { CreatureConfig } from "@/contexts/CreatureConfigProvider";
-import {getInitialSpineArray, SpineSegment} from "@/canvasUtils/spine";
+import {getInitialSpineArray, SpineSegment} from "@/creature/spine";
 
 export type LimbSegment = {
     x: number;
     y: number;
     radius: number;
     angle: number;
-    stepPosition?: { x: number; y: number };
 };
 
 export const getInitialLimbSegments = (creatureConfig: CreatureConfig, width: number, height: number): LimbSegment[][] => {
@@ -47,29 +46,59 @@ export const updateLimbSegmentPositions = (limbSegments: LimbSegment[][], spineS
     for (let i = 0; i < limbSegments.length; i++) {
         const limb = limbSegments[i];
         const limbConfig = limbsConfig[i];
-        const spawnSegment = spineSegments[limbConfig.spawnSpineSegment];
+        const spineSegment = spineSegments[limbConfig.spawnSpineSegment];
 
         // Calculate base position offset based on the spine segment's angle
-        const angleOffset = limbConfig.spawnDirection === 'left' ?  - Math.PI / 2 : +Math.PI / 2;
-        const baseAngle = spawnSegment.angle + angleOffset;
+        const angleOffset = limbConfig.spawnDirection === 'left' ? -Math.PI / 4 : Math.PI / 4;
+        const baseAngle = spineSegment.angle + angleOffset;
 
-        // Update base segment position
-        const baseX = spawnSegment.x + Math.cos(baseAngle) * (spawnSegment.radius - limb[0].radius);
-        const baseY = spawnSegment.y + Math.sin(baseAngle) * (spawnSegment.radius - limb[0].radius);
+        // Determine the base position of the limb relative to the spine segment
+        const baseX = spineSegment.x + Math.cos(baseAngle) * (spineSegment.radius - limb[0].radius);
+        const baseY = spineSegment.y + Math.sin(baseAngle) * (spineSegment.radius - limb[0].radius);
 
+        // Calculate the maximum distance the limb can extend
+        const maxDistance = limbConfig.linkSize * (limb.length - 1);
+
+        // Determine the distance from the base to the last segment of the limb
+        const lastSegment = limb[limb.length - 1];
+        const distanceToLastSegment = Math.sqrt((lastSegment.x - baseX) ** 2 + (lastSegment.y - baseY) ** 2);
+
+        let targetX, targetY;
+
+        // If the last segment is out of reach, adjust its position to be within the maximum distance
+        if (distanceToLastSegment > maxDistance || distanceToLastSegment < maxDistance*0.5) {
+            targetX = baseX + Math.cos(baseAngle) * maxDistance;
+            targetY = baseY + Math.sin(baseAngle) * maxDistance;
+        } else {
+            // Otherwise, keep the last segment at its current position
+            targetX = lastSegment.x;
+            targetY = lastSegment.y;
+        }
+
+        // Update the last segment's position
+        lastSegment.x = targetX;
+        lastSegment.y = targetY;
+
+        // Calculate the angle from the base segment to the last segment
+        const angleToLastSegment = Math.atan2(targetY - baseY, targetX - baseX);
+
+        // Update positions of the middle segments along the straight line between base and last segment
+        for (let j = limb.length - 2; j > 0; j--) {
+            const nextSegment = limb[j + 1];
+            const currSegment = limb[j];
+
+            // Position each middle segment based on the next segment
+            currSegment.x = nextSegment.x - Math.cos(angleToLastSegment) * limbConfig.linkSize;
+            currSegment.y = nextSegment.y - Math.sin(angleToLastSegment) * limbConfig.linkSize;
+
+            // Set the angle of the current segment
+            currSegment.angle = angleToLastSegment;
+        }
+
+        // Update the first segment position to attach it to the spine
         limb[0].x = baseX;
         limb[0].y = baseY;
-        limb[0].angle =  limbConfig.spawnDirection === 'left' ? baseAngle +  Math.PI / 4 : baseAngle - Math.PI / 4;
-
-        // Update following segments positions
-        for (let j = 1; j < limb.length; j++) {
-            const prevSegment = limb[j - 1];
-            const currSegment = limb[j];
-            const angle = prevSegment.angle;
-            currSegment.x = prevSegment.x + Math.cos(angle) * limbConfig.linkSize;
-            currSegment.y = prevSegment.y + Math.sin(angle) * limbConfig.linkSize;
-            currSegment.angle =   angle;
-        }
+        limb[0].angle = baseAngle;
     }
 };
 
@@ -139,13 +168,15 @@ export const drawLimeSegmentsOutline = (limbSegments: LimbSegment[][], ctx: Canv
 
 export const debugLimbBaseSegments = (ctx: CanvasRenderingContext2D, limbSegments: LimbSegment[][]) => {
     ctx.beginPath();
-    ctx.strokeStyle = 'black';
     ctx.lineWidth = 4;
 
+    const colorArray = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'black', 'white'];
+
     limbSegments.forEach((limbSegment) => {
-        limbSegment.forEach((segment) => {
+        limbSegment.forEach((segment, index) => {
             const currentSeg =segment;
             ctx.beginPath();
+            ctx.strokeStyle = colorArray[index];
             ctx.arc(currentSeg.x, currentSeg.y, currentSeg.radius, 0, Math.PI * 2);
             ctx.stroke();
         })

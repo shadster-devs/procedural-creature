@@ -1,6 +1,6 @@
 //spine.ts
 
-import {constrainAngle} from "@/components/CreatureSimulator/utils";
+import {constrainAngle} from "@/utils/math";
 import {CreatureConfig} from "@/contexts/CreatureConfigProvider";
 
 

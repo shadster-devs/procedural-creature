@@ -1,17 +1,19 @@
 //creature.ts
+import {CreatureConfig} from "@/contexts/CreatureConfigProvider";
 import {
-    debugSpineSegments, drawSpineSegmentsOutline,
+    debugSpineSegments,
+    drawSpineSegmentsOutline,
     getInitialSpineArray,
-    SpineSegment, updateSpineSegmentPositions,
-} from "@/canvasUtils/spine";
+    SpineSegment,
+    updateSpineSegmentPositions
+} from "@/creature/spine";
 import {
     debugLimbBaseSegments,
     drawLimeSegmentsOutline,
     getInitialLimbSegments,
     LimbSegment,
-    updateLimbSegmentPositions,
-} from "@/canvasUtils/limb";
-import {CreatureConfig} from "@/contexts/CreatureConfigProvider";
+    updateLimbSegmentPositions
+} from "@/creature/limb";
 
 export type CreatureSegments = {
     spineSegment: SpineSegment[];

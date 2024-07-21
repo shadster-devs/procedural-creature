@@ -46,29 +46,29 @@ export const useCreatureConfig = () => {
 export const CreatureConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [creatureConfig, setCreatureConfig] = React.useState<CreatureConfig>({
         spine: {
-            numOfSegments: 30,
-            segmentsRadius: Array.from({ length: 50 }, (_, i) => 50 - (i / 2)),
-            linkSize: 12,
+            numOfSegments: 10,
+            segmentsRadius: Array.from({ length: 10 }, (_, i) => 10 - (i / 2)),
+            linkSize: 5,
             angleConstraint: Math.PI / 12,
         },
         limbs : [],
     });
 
     const initializeLimbs = (numOfSegments: number) => {
-        const limbSpawnPoints = [10, 40];
+        const limbSpawnPoints = [0, 95];
         return limbSpawnPoints.flatMap(spawnPoint => [
             {
                 numOfSegments: 3,
-                segmentsRadius: Array.from({ length: 3 }, (_, i) => 20 - (i / 2)),
-                linkSize: 50,
+                segmentsRadius: Array.from({ length: 3 }, (_, i) => 10 - (i / 2)),
+                linkSize: 15,
                 angleConstraint: Math.PI / 12,
                 spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
                 spawnDirection: 'left' as 'left' | 'right',
             },
             {
                 numOfSegments: 3,
-                segmentsRadius: Array.from({ length: 3 }, (_, i) => 20 - (i / 2)),
-                linkSize: 50,
+                segmentsRadius: Array.from({ length: 3 }, (_, i) => 10 - (i / 2)),
+                linkSize: 15,
                 angleConstraint: Math.PI / 12,
                 spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
                 spawnDirection: 'right' as 'right' | 'left',
@@ -91,7 +91,7 @@ export const CreatureConfigProvider: React.FC<{ children: React.ReactNode }> = (
             ...prevState,
             spine: {
                 ...prevState.spine,
-                segmentsRadius: Array.from({ length: prevState.spine.numOfSegments }, (_, i) => 50 - (i / 2)),
+                segmentsRadius: Array.from({ length: prevState.spine.numOfSegments }, (_, i) => 20 - (i / 2)),
             },
             limbs: initializeLimbs(prevState.spine.numOfSegments),
         }));
