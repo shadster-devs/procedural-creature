@@ -115,7 +115,6 @@ export const drawSpineSegmentsOutline = (segments: SpineSegment[], ctx : CanvasR
 export const debugSpineSegments = (ctx: CanvasRenderingContext2D, segments: SpineSegment[]) => {
     ctx.beginPath();
     ctx.strokeStyle = 'black';
-    ctx.fillStyle = '#AC3931';
     ctx.lineWidth = 4;
 
     segments.forEach((segment) => {

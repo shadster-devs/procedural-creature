@@ -5,7 +5,8 @@ import {
     SpineSegment, updateSpineSegmentPositions,
 } from "@/canvasUtils/spine";
 import {
-    drawLimbBaseSegments, drawLimeSegmentsOutline,
+    debugLimbBaseSegments,
+    drawLimeSegmentsOutline,
     getInitialLimbSegments,
     LimbSegment,
     updateLimbSegmentPositions,
@@ -33,10 +34,9 @@ export const updateCreatureOnCanvas = (ctx: CanvasRenderingContext2D, creatureCo
 
     if(debugMode) {
         debugSpineSegments(ctx, creatureSegments.spineSegment);
-        drawLimbBaseSegments(ctx, creatureSegments.limbSegments);
-
+        debugLimbBaseSegments(ctx, creatureSegments.limbSegments);
     } else {
-        drawLimeSegmentsOutline( creatureSegments.limbSegments, ctx);
+        drawLimeSegmentsOutline(creatureSegments.limbSegments, ctx);
         drawSpineSegmentsOutline(creatureSegments.spineSegment, ctx);
     }
 }

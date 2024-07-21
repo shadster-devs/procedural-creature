@@ -55,20 +55,20 @@ export const CreatureConfigProvider: React.FC<{ children: React.ReactNode }> = (
     });
 
     const initializeLimbs = (numOfSegments: number) => {
-        const limbSpawnPoints = [30, 80]; // Example spawn points, these can be adjusted
+        const limbSpawnPoints = [10, 40];
         return limbSpawnPoints.flatMap(spawnPoint => [
             {
-                numOfSegments: 5,
-                segmentsRadius: Array.from({ length: 5 }, (_, i) => 20 - (i / 2)),
-                linkSize: 20,
+                numOfSegments: 3,
+                segmentsRadius: Array.from({ length: 3 }, (_, i) => 20 - (i / 2)),
+                linkSize: 50,
                 angleConstraint: Math.PI / 12,
                 spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
                 spawnDirection: 'left' as 'left' | 'right',
             },
             {
-                numOfSegments: 5,
-                segmentsRadius: Array.from({ length: 5 }, (_, i) => 20 - (i / 2)),
-                linkSize: 20,
+                numOfSegments: 3,
+                segmentsRadius: Array.from({ length: 3 }, (_, i) => 20 - (i / 2)),
+                linkSize: 50,
                 angleConstraint: Math.PI / 12,
                 spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
                 spawnDirection: 'right' as 'right' | 'left',

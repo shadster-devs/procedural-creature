@@ -6,6 +6,7 @@ export type LimbSegment = {
     y: number;
     radius: number;
     angle: number;
+    stepPosition?: { x: number; y: number };
 };
 
 export const getInitialLimbSegments = (creatureConfig: CreatureConfig, width: number, height: number): LimbSegment[][] => {
@@ -15,7 +16,6 @@ export const getInitialLimbSegments = (creatureConfig: CreatureConfig, width: nu
 
     const spineSegments = getInitialSpineArray(creatureConfig, width, height);
 
-    // Initialize limb segments with only the base segment for now
     for (let i = 0; i < limbsConfig.length; i++) {
         const spawnSegment = spineSegments[limbsConfig[i].spawnSpineSegment];
         const baseX = limbsConfig[i].spawnDirection === 'left'
@@ -50,7 +50,7 @@ export const updateLimbSegmentPositions = (limbSegments: LimbSegment[][], spineS
         const spawnSegment = spineSegments[limbConfig.spawnSpineSegment];
 
         // Calculate base position offset based on the spine segment's angle
-        const angleOffset = limbConfig.spawnDirection === 'left' ? Math.PI / 2 : -Math.PI / 2;
+        const angleOffset = limbConfig.spawnDirection === 'left' ?  - Math.PI / 2 : +Math.PI / 2;
         const baseAngle = spawnSegment.angle + angleOffset;
 
         // Update base segment position
@@ -59,7 +59,7 @@ export const updateLimbSegmentPositions = (limbSegments: LimbSegment[][], spineS
 
         limb[0].x = baseX;
         limb[0].y = baseY;
-        limb[0].angle =  limbConfig.spawnDirection === 'left' ? baseAngle + Math.PI / 4 : baseAngle - Math.PI / 4;
+        limb[0].angle =  limbConfig.spawnDirection === 'left' ? baseAngle +  Math.PI / 4 : baseAngle - Math.PI / 4;
 
         // Update following segments positions
         for (let j = 1; j < limb.length; j++) {
@@ -137,21 +137,16 @@ export const drawLimeSegmentsOutline = (limbSegments: LimbSegment[][], ctx: Canv
     })
 }
 
-
-
-// Function to draw only the base segment of the limb which is attached to the spine
-export const drawLimbBaseSegments = (ctx: CanvasRenderingContext2D, limbSegments: LimbSegment[][]) => {
+export const debugLimbBaseSegments = (ctx: CanvasRenderingContext2D, limbSegments: LimbSegment[][]) => {
     ctx.beginPath();
-    ctx.strokeStyle = 'blue';
-    ctx.fillStyle = '#69A2B0';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 4;
 
     limbSegments.forEach((limbSegment) => {
         limbSegment.forEach((segment) => {
             const currentSeg =segment;
             ctx.beginPath();
             ctx.arc(currentSeg.x, currentSeg.y, currentSeg.radius, 0, Math.PI * 2);
-            ctx.fill();
             ctx.stroke();
         })
 
