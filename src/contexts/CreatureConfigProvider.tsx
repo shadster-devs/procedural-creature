@@ -37,27 +37,7 @@ export const useCreatureConfig = (): CreatureConfigContextProps => {
     return context;
 };
 
-const initializeLimbs = (numOfSegments: number): Limb[] => {
-    const limbSpawnPoints = [0, 95];
-    return limbSpawnPoints.flatMap(spawnPoint => [
-        {
-            numOfSegments: 3,
-            segmentsRadius: Array.from({ length: 3 }, (_, i) => 10 - (i / 2)),
-            linkSize: 15,
-            angleConstraint: Math.PI / 12,
-            spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
-            spawnDirection: 'left',
-        },
-        {
-            numOfSegments: 3,
-            segmentsRadius: Array.from({ length: 3 }, (_, i) => 10 - (i / 2)),
-            linkSize: 15,
-            angleConstraint: Math.PI / 12,
-            spawnSpineSegment: Math.floor(numOfSegments * spawnPoint / 100),
-            spawnDirection: 'right',
-        }
-    ]);
-};
+
 
 const CreatureConfigProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [creatureConfig, setCreatureConfig] = useState<CreatureConfig>({
@@ -65,31 +45,23 @@ const CreatureConfigProvider: React.FC<{ children: ReactNode }> = ({ children })
             numOfSegments: 50,
             segmentsRadius: Array.from({ length: 50 }, (_, i) => 50 - (i / 2)),
             linkSize: 5,
-            angleConstraint: Math.PI / 12,
+            angleConstraint: Math.PI / 4,
         },
         limbs: [],
     });
 
-    useEffect(() => {
-        setCreatureConfig(prevState => ({
-            ...prevState,
-            spine: {
-                ...prevState.spine,
-                angleConstraint: Math.PI / 12 / (30 / prevState.spine.linkSize),
-            },
-        }));
-    }, [creatureConfig.spine.linkSize]);
+
 
     useEffect(() => {
         setCreatureConfig(prevState => ({
             ...prevState,
             spine: {
                 ...prevState.spine,
-                segmentsRadius: Array.from({ length: prevState.spine.numOfSegments }, (_, i) => 50 - (i / 5)),
+                segmentsRadius: Array.from({ length: prevState.spine.numOfSegments }, (_, i) => prevState.spine.numOfSegments - (i / 5)),
             },
-            limbs: initializeLimbs(prevState.spine.numOfSegments),
         }));
     }, [creatureConfig.spine.numOfSegments]);
+
 
     const updateCreatureConfig = (newState: Partial<CreatureConfig>) => {
         setCreatureConfig(prevState => ({

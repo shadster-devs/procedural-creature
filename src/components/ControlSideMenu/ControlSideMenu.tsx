@@ -124,20 +124,40 @@ const presets: Record<string, CreatureConfig> = {
                 "spawnDirection": 'right',
             }
         ]
-    }};
+    },
+    "centipede": {
+        spine: {
+            numOfSegments: 32, // Twice the number of legs for flexibility
+            segmentsRadius: Array.from({ length: 40 }, (_, i) => 15 ), // Adjusted radius per segment
+            linkSize: 5,
+            angleConstraint: Math.PI / 12,
+        },
+        limbs: [
+            // Generating 16 pairs of limbs (32 limbs in total)
+            ...Array.from({ length: 16 }, (_, index) => ({
+                numOfSegments: 3,
+                segmentsRadius: [8, 6, 4], // Example radius values for the segments
+                linkSize: 10,
+                angleConstraint: Math.PI / 10,
+                // Spawning points adjusted for each pair of limbs
+                spawnSpineSegment: index*2,
+                spawnDirection: index % 2 === 0 ? 'left' : 'right',
+            })),
+        ]
+    }
+
+};
 
 
 const ControlSideMenu: React.FC<ControlSideMenuProps> = (props) => {
     const { isCollapsed } = props;
     const { creatureConfig, updateCreatureConfig, setCreaturePreset } = useCreatureConfig();
     const [activeTab, setActiveTab] = useState('Spine');
-    const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 
     const handlePresetChange = (presetName: string) => {
         const preset = presets[presetName];
         if (preset) {
             setCreaturePreset(preset);
-            setSelectedPreset(presetName);
             setTempConfig(preset);
         }
     };
@@ -145,45 +165,6 @@ const ControlSideMenu: React.FC<ControlSideMenuProps> = (props) => {
     // Temporary state for changes
     const [tempConfig, setTempConfig] = useState(creatureConfig);
 
-
-
-    const handleNumOfSegmentsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const numOfSegments = parseInt(event.target.value);
-        setTempConfig(prev => ({
-            ...prev,
-            spine: {
-                ...prev.spine,
-                numOfSegments
-            }
-        }));
-    };
-
-    const handleSegmentsRadiusChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-        const newRadius = parseInt(event.target.value);
-        const newSegmentsRadius = [
-            ...tempConfig.spine.segmentsRadius.slice(0, index),
-            newRadius,
-            ...tempConfig.spine.segmentsRadius.slice(index + 1)
-        ];
-        setTempConfig(prev => ({
-            ...prev,
-            spine: {
-                ...prev.spine,
-                segmentsRadius: newSegmentsRadius
-            }
-        }));
-    };
-
-    const handleLinkSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const linkSize = parseInt(event.target.value);
-        setTempConfig(prev => ({
-            ...prev,
-            spine: {
-                ...prev.spine,
-                linkSize
-            }
-        }));
-    };
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
@@ -216,7 +197,15 @@ const ControlSideMenu: React.FC<ControlSideMenuProps> = (props) => {
                 Number of segments
                 <input
                     type="number"
-                    onChange={handleNumOfSegmentsChange}
+                    onChange={event => {
+                        setTempConfig(prev => ({
+                            ...prev,
+                            spine: {
+                                ...prev.spine,
+                                numOfSegments: parseInt(event.target.value)
+                            }
+                        }));
+                    }}
                     value={tempConfig.spine.numOfSegments}
                 />
             </label>
@@ -227,7 +216,35 @@ const ControlSideMenu: React.FC<ControlSideMenuProps> = (props) => {
                     min="10"
                     max="50"
                     value={tempConfig.spine.linkSize}
-                    onChange={handleLinkSizeChange}
+                    onChange={event => {
+                        setTempConfig(prev => ({
+                            ...prev,
+                            spine: {
+                                ...prev.spine,
+                                linkSize: parseInt(event.target.value)
+                            }
+                        }));
+                    }}
+                />
+            </label>
+            <label>
+                Angle Constraint
+                <input
+                    type="number"
+                    min="0"
+                    max="90"
+                    value={tempConfig.spine.angleConstraint * (180 / Math.PI)}
+                    onChange={event => {
+                        console.log(parseFloat(event.target.value));
+                        setTempConfig(prev => (
+                            {
+                            ...prev,
+                            spine: {
+                                ...prev.spine,
+                                angleConstraint: parseFloat(event.target.value) * (Math.PI / 180)
+                            }
+                        }));
+                    }}
                 />
             </label>
             {tempConfig.spine.segmentsRadius.map((radius, index) => (
@@ -238,7 +255,19 @@ const ControlSideMenu: React.FC<ControlSideMenuProps> = (props) => {
                         min="10"
                         max="50"
                         value={radius}
-                        onChange={event => handleSegmentsRadiusChange(index, event)}
+                        onChange={event => {
+                            setTempConfig(prev => ({
+                                ...prev,
+                                spine: {
+                                    ...prev.spine,
+                                    segmentsRadius: [
+                                        ...prev.spine.segmentsRadius.slice(0, index),
+                                        parseInt(event.target.value),
+                                        ...prev.spine.segmentsRadius.slice(index + 1)
+                                    ]
+                                }
+                            }));
+                        }}
                     />
                 </label>
             ))}
