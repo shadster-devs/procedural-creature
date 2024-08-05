@@ -26,7 +26,7 @@ const CreatureSimulator: React.FC<CreatureSimulatorProps> = ({ canvasRef }) => {
 
         const animate = () => {
             ctx.clearRect(0, 0, width, height);
-            updateCreatureOnCanvas(ctx, creatureConfig, moveToX.current, moveToY.current, width, height, creatureSegments, false);
+            updateCreatureOnCanvas(ctx, creatureConfig, moveToX.current, moveToY.current, width, height, creatureSegments, false    );
             requestAnimationFrame(animate);
         };
 

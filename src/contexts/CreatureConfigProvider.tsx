@@ -7,6 +7,18 @@ export type Spine = {
     angleConstraint: number;
 };
 
+
+export type Tentacle = {
+    numOfSegments: number;
+    segmentsRadius: number[];
+    linkSize: number;
+    angleConstraint: number;
+    spawnSpineSegment: number;
+    spawnDirection: 'left' | 'right';
+    creepingSpeed: number;  // Speed at which the tentacle creeps
+    curlingFactor: number;  // Factor that controls how much the tentacle curls
+};
+
 export type Limb = {
     numOfSegments: number;
     segmentsRadius: number[];
@@ -19,6 +31,7 @@ export type Limb = {
 export type CreatureConfig = {
     spine: Spine;
     limbs: Limb[];
+    tentacles?: Tentacle[];
 };
 
 interface CreatureConfigContextProps {
@@ -48,6 +61,29 @@ const CreatureConfigProvider: React.FC<{ children: ReactNode }> = ({ children })
             angleConstraint: Math.PI / 4,
         },
         limbs: [],
+        tentacles : []
+        // tentacles: [
+        //     {
+        //         numOfSegments: 30,
+        //         segmentsRadius: Array.from({ length: 30 }, (_, i) => 30 - (i / 2)),
+        //         linkSize: 10,
+        //         angleConstraint: Math.PI / 4,
+        //         spawnSpineSegment: 25,
+        //         spawnDirection: 'left',
+        //         creepingSpeed: 0.1,
+        //         curlingFactor: 0.5,
+        //     },
+        //     {
+        //         numOfSegments: 30,
+        //         segmentsRadius: Array.from({ length: 30 }, (_, i) => 30 - (i / 2)),
+        //         linkSize: 10,
+        //         angleConstraint: Math.PI / 4,
+        //         spawnSpineSegment: 25,
+        //         spawnDirection: 'right',
+        //         creepingSpeed: 0.1,
+        //         curlingFactor: 0.5,
+        //     },
+        // ],
     });
 
 

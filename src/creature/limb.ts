@@ -1,3 +1,4 @@
+//limb.ts
 import { CreatureConfig } from "@/contexts/CreatureConfigProvider";
 import {getInitialSpineArray, SpineSegment} from "@/creature/spine";
 
@@ -102,7 +103,7 @@ export const updateLimbSegmentPositions = (limbSegments: LimbSegment[][], spineS
     }
 };
 
-export const drawLimeSegmentsOutline = (limbSegments: LimbSegment[][], ctx: CanvasRenderingContext2D) => {
+export const drawLimbSegmentsOutline = (limbSegments: LimbSegment[][], ctx: CanvasRenderingContext2D) => {
 
     ctx.strokeStyle = 'black';
     ctx.fillStyle = '#AC3931';

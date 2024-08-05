@@ -127,21 +127,19 @@ const presets: Record<string, CreatureConfig> = {
     },
     "centipede": {
         spine: {
-            numOfSegments: 32, // Twice the number of legs for flexibility
-            segmentsRadius: Array.from({ length: 40 }, (_, i) => 15 ), // Adjusted radius per segment
+            numOfSegments: 32,
+            segmentsRadius: Array.from({ length: 40 }, (_, i) => 15 ),
             linkSize: 5,
             angleConstraint: Math.PI / 12,
         },
         limbs: [
-            // Generating 16 pairs of limbs (32 limbs in total)
             ...Array.from({ length: 16 }, (_, index) => ({
                 numOfSegments: 3,
-                segmentsRadius: [8, 6, 4], // Example radius values for the segments
+                segmentsRadius: [8, 6, 4],
                 linkSize: 10,
                 angleConstraint: Math.PI / 10,
-                // Spawning points adjusted for each pair of limbs
-                spawnSpineSegment: index*2,
-                spawnDirection: index % 2 === 0 ? 'left' : 'right',
+                spawnSpineSegment: Math.floor(index / 2) * 4 +1,
+                spawnDirection: index % 2 === 0 ? 'left' : 'right' as 'left' | 'right',
             })),
         ]
     }
